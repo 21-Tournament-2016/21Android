@@ -1,9 +1,11 @@
 package Utilities;
 
+import java.io.Serializable;
+
 /**
  * Created by Brandon on 12/6/2015.
  */
-public class Team {
+public class Team implements Serializable{
 
     private String teamName;
     private int wins;

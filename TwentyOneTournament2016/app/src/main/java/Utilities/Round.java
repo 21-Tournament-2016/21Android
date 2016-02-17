@@ -1,11 +1,12 @@
 package Utilities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Brandon on 12/6/2015.
  */
-public class Round {
+public class Round implements Serializable{
 
     private int roundNumber;
     private ArrayList<Match> matches;

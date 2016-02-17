@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:weightSum="1"
+    android:background="#b4b4b4">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="vs"
+        android:id="@+id/lbl_vs"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Team1"
+        android:id="@+id/lbl_team1"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Team2"
+        android:id="@+id/lbl_team2"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0-0"
+        android:id="@+id/lbl_team2Record"
+        android:paddingTop="10dp"
+        android:layout_below="@id/lbl_team2"
+        android:layout_alignEnd="@+id/lbl_team2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0-0"
+        android:id="@+id/lbl_team1Record"
+        android:paddingTop="10dp"
+        android:layout_below="@id/lbl_team1"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="# cups"
+        android:id="@+id/lbl_winnerCupDifferential"
+        android:layout_alignBottom="@id/lbl_team1Record"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="◄"
+        android:id="@+id/lbl_team1Arrow"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/lbl_team1"
+        android:layout_marginStart="15dp"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="►"
+        android:id="@+id/lbl_team2Arrow"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/lbl_team2"
+        android:layout_marginEnd="15dp"
+        android:visibility="invisible"/>
+</RelativeLayout>

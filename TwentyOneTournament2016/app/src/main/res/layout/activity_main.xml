@@ -5,7 +5,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Regular Season"
+        android:id="@+id/btn_loadSchedule"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="loadSchedule"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Standings"
+        android:id="@+id/btn_standings"
+        android:layout_above="@+id/btn_loadSchedule"
+        android:layout_centerHorizontal="true"
+        android:onClick="loadStandings"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restart Schedule"
+        android:id="@+id/btn_restart"
+        android:layout_below="@+id/btn_loadSchedule"
+        android:layout_centerHorizontal="true"
+        android:onClick="restart"/>
 
 </RelativeLayout>

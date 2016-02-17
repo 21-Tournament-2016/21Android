@@ -1,9 +1,11 @@
 package Utilities;
 
+import java.io.Serializable;
+
 /**
  * Created by Brandon on 12/6/2015.
  */
-public class Match {
+public class Match implements Serializable{
 
     private String objectID;
     private String team1;
@@ -11,14 +13,20 @@ public class Match {
     private String team1ID;
     private String team2ID;
     private int winner;
+    private int cupDifferential;
+    private String team1Record;
+    private String team2Record;
 
-    public Match(String objectID, String team1, String team2, String team1ID, String team2ID) {
+    public Match(String objectID, String team1, String team2, String team1ID, String team2ID, int winner, int cupDifferential, String team1Record, String team2Record) {
         this.objectID = objectID;
         this.team1 = team1;
         this.team2 = team2;
         this.team1ID = team1ID;
         this.team2ID = team2ID;
-        this.winner = 0;
+        this.winner = winner;
+        this.cupDifferential = cupDifferential;
+        this.team1Record = team1Record;
+        this.team2Record = team2Record;
     }
 
     public String getObjectID() {
@@ -69,4 +77,27 @@ public class Match {
         this.winner = winner;
     }
 
+    public int getCupDifferential() {
+        return cupDifferential;
+    }
+
+    public void setCupDifferential(int cupDifferential) {
+        this.cupDifferential = cupDifferential;
+    }
+
+    public String getTeam1Record() {
+        return team1Record;
+    }
+
+    public void setTeam1Record(String team1Record) {
+        this.team1Record = team1Record;
+    }
+
+    public String getTeam2Record() {
+        return team2Record;
+    }
+
+    public void setTeam2Record(String team2Record) {
+        this.team2Record = team2Record;
+    }
 }

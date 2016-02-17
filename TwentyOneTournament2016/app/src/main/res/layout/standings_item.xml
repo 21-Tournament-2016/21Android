@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="##"
+        android:id="@+id/txt_rank"
+        android:layout_below="@+id/txt_rankTitle"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Team Name"
+        android:id="@+id/txt_teamName"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/txt_rank"/>
+
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="-##"
+        android:id="@+id/txt_cd"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0-0"
+        android:id="@+id/txt_record"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/txt_cd"
+        android:paddingEnd="15dp"/>
+
+</RelativeLayout>
