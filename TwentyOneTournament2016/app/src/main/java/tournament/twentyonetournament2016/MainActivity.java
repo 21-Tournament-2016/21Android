@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                rounds = ParseOps.getInstance().getSchedule(10);
+                rounds = ParseOps.getInstance().getSchedule(11);
                  MainActivity.this.runOnUiThread(new Runnable() {
                      @Override
                      public void run() {
@@ -84,6 +84,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void restart(View view){
-        ParseOps.getInstance().restartTournament();
+        dialog = ProgressDialog.show(MainActivity.this, "", "Generating Schedule.\nThis could take a moment...", true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ParseOps.getInstance().restartTournament();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.hide();
+                    }
+                });
+            }
+        }).start();
     }
 }

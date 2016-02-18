@@ -5,6 +5,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class ParseOps {
         List<Round> schedule = new ArrayList<Round>();
         int currentRound = 1;
         Map<String, String> dictionary = new HashMap<String, String>();
-        ParseQuery<ParseObject> recordQuery = ParseQuery.getQuery("TeamOld");
+        ParseQuery<ParseObject> recordQuery = ParseQuery.getQuery("Team");
         try{
             List<ParseObject> teams = recordQuery.find();
             for (ParseObject team : teams){
@@ -57,7 +58,7 @@ public class ParseOps {
             }
             while (currentRound <= numberOfRounds) {
                 ArrayList<Match> matches = new ArrayList<Match>();
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("MatchOld");
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Match");
                 query.whereEqualTo("RoundNumber", currentRound);
                 query.addAscendingOrder("matchNumber");
                 List<ParseObject> matchesInParse = query.find();
@@ -82,8 +83,8 @@ public class ParseOps {
             while (currentRound <= numberOfRounds) {
                 ArrayList<Match> matches = new ArrayList<Match>();
                 List<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
-                ParseQuery<ParseObject> query1 = ParseQuery.getQuery("MatchOld");
-                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("MatchOld");
+                ParseQuery<ParseObject> query1 = ParseQuery.getQuery("Match");
+                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Match");
                 query1.whereEqualTo("RoundNumber", currentRound);
                 query1.whereEqualTo("Team1", team);
                 query2.whereEqualTo("RoundNumber", currentRound);
@@ -108,7 +109,7 @@ public class ParseOps {
     }
 
     public void saveMatch(String objectID, int winner, int CD){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("MatchOld");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Match");
         try {
             ParseObject match = query.get(objectID);
             match.put("Winner", winner);
@@ -133,7 +134,7 @@ public class ParseOps {
     }
 
     public void updateStandings(String winner, String loser, int CD){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("TeamOld");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
         try {
             query.whereEqualTo("teamName", winner);
             ParseObject team = query.find().get(0);
@@ -162,7 +163,7 @@ public class ParseOps {
 
     public TeamDetails getTeamInfo(String team){
         TeamDetails currentTeam;
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("TeamOld");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
         try {
             query.whereEqualTo("teamName", team);
             ParseObject parseTeam = query.find().get(0);
@@ -183,34 +184,77 @@ public class ParseOps {
         return null;
     }
 
-    public void restartTournament(){
-//        List<Team> teams = getStandings();
-//        int subsetSize = teams.size()/2;
-//        List<Team> team1 = teams.subList(0,subsetSize);
-//        List<Team> team2 = teams.subList(subsetSize, teams.size());
-//        Integer[] twos = {2,4,8,16,32};
-//      //Used for finding how many playoff rounds are needed
-//        int x;
-//        for (int i : twos){
-//            if (subsetSize > i){
-//                continue;
-//            }
-//            else{
-//                x = Arrays.asList(twos).indexOf(i);
-//                Log.i("test", Integer.toString(x +1));
-//                break;
-//            }
-//        }
-//        int halvedSize = team1.size();
-//        for (int i = 0; i < 11; i++) {
-//            for (int j = 0; j < halvedSize; j++) {
-//                Log.i("Match", String.format("%s vs %s", team1.get(j).getTeamName(), team2.get(j).getTeamName()));
-//            }
-//            Team removed1 = team1.remove(team1.size() - 1);
-//            Team removed2 = team2.get(0);
-//            team1.add(1, removed2);
-//            team2.add(removed1);
-//        }
+    public void restartTournament() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
+        ParseQuery<ParseObject> matchQuery = ParseQuery.getQuery("Match");
+        try {
+            List<ParseObject> parseTeams = query.find();
+            for (ParseObject parseTeam : parseTeams){
+                parseTeam.put("wins", 0);
+                parseTeam.put("losses", 0);
+                parseTeam.put("CD", 0);
+                parseTeam.saveInBackground();
+            }
+            List<ParseObject> parseMatches = matchQuery.find();
+            for (ParseObject parseMatch : parseMatches){
+                parseMatch.deleteInBackground();
+                parseMatch.saveInBackground();
+            }
+
+        } catch (ParseException e) {
+
+        }
+
+        List<Team> teams = getStandings();
+        for (Team team : teams){
+            if (team.getTeamName().equals("Purdue")){
+                Collections.swap(teams, 0, teams.indexOf(team));
+            }
+            else if (team.getTeamName().equals("Salisbury")){
+                Collections.swap(teams, 1, teams.indexOf(team));
+            }
+            else{
+                continue;
+            }
+        }
+        List<Team> secondTeams = new ArrayList<Team>(teams);
+        ArrayList<Round> rounds = new ArrayList<>();
+        int numTeams = teams.size();
+        int numDays = (numTeams - 1); // Days needed to complete tournament
+        int halfSize = numTeams / 2;
+
+        secondTeams.remove(0);
+
+        int teamsSize = secondTeams.size();
+
+        for (int day = 0; day < numDays; day++)
+        {
+            ArrayList<Match> matches = new ArrayList<Match>();
+            int round = day+1;
+            int matchNum = 1;
+            int teamIdx = day % teamsSize;
+            Match firstMatch = new Match(teams.get(0).getTeamName(), secondTeams.get(teamIdx).getTeamName(), round, matchNum);
+            matches.add(firstMatch);
+            for (int idx = 1; idx < halfSize; idx++)
+            {
+                matchNum++;
+                int firstTeam = (day + idx) % teamsSize;
+                int secondTeam = (day  + teamsSize - idx) % teamsSize;
+                Match otherMatch = new Match(secondTeams.get(firstTeam).getTeamName(), secondTeams.get(secondTeam).getTeamName(), round, matchNum);
+                matches.add(otherMatch);
+            }
+            if (round != 1){
+                Collections.shuffle(matches);
+            }
+            for (Match match : matches){
+                ParseObject parseMatch = new ParseObject("Match");
+                parseMatch.put("Team1", match.getTeam1());
+                parseMatch.put("Team2", match.getTeam2());
+                parseMatch.put("RoundNumber", round);
+                parseMatch.put("matchNumber", matchNum);
+                parseMatch.saveInBackground();
+            }
+        }
     }
 
 

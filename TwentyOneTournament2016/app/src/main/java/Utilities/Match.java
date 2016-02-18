@@ -16,6 +16,8 @@ public class Match implements Serializable{
     private int cupDifferential;
     private String team1Record;
     private String team2Record;
+    private int round;
+    private int matchNumber;
 
     public Match(String objectID, String team1, String team2, String team1ID, String team2ID, int winner, int cupDifferential, String team1Record, String team2Record) {
         this.objectID = objectID;
@@ -27,6 +29,13 @@ public class Match implements Serializable{
         this.cupDifferential = cupDifferential;
         this.team1Record = team1Record;
         this.team2Record = team2Record;
+    }
+
+    public Match (String team1, String team2, int round, int matchNumber){
+        this.team1 = team1;
+        this.team2 = team2;
+        this.round = round;
+        this.matchNumber = matchNumber;
     }
 
     public String getObjectID() {
