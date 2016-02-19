@@ -35,10 +35,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         Parse.initialize(this);
         ParseInstallation.getCurrentInstallation().saveInBackground();
-//        schedulegenerator();
-//        ParsePush push = new ParsePush();
-//        push.setMessage("TEST FROM THE APP");
-//        push.sendInBackground();
     }
 
     public static Context getAppContext(){

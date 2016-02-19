@@ -2,6 +2,7 @@ package Utilities;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -115,6 +116,7 @@ public class ParseOps {
             match.put("Winner", winner);
             match.put("CD", CD);
             match.save();
+            sendPush(match);
             startStandingsUpdate(match);
         } catch (ParseException e){
             e.printStackTrace();
@@ -257,6 +259,22 @@ public class ParseOps {
                 x++;
             }
         }
+    }
+
+    public void sendPush(ParseObject match){
+        String winner;
+        String loser;
+        if (match.getInt("Winner") == 1){
+            winner = match.getString("Team1");
+            loser = match.getString("Team2");
+        }
+        else{
+            loser = match.getString("Team1");
+            winner = match.getString("Team2");
+        }
+        ParsePush push = new ParsePush();
+        push.setMessage(String.format("%s has beaten %s by %d cups", winner, loser,match.getInt("CD")));
+        push.sendInBackground();
     }
 
 
