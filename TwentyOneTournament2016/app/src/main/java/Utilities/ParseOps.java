@@ -174,7 +174,7 @@ public class ParseOps {
             String player1 = parseTeam.getString("player1");
             String player2 = parseTeam.getString("player2");
             String player3 = parseTeam.getString("player3");
-            List<Round> schedule = getSchedule(10, team);
+            List<Round> schedule = getSchedule(11, team);
 
             currentTeam = new TeamDetails(team, wins, losses, CD, seasons, player1, player2, player3, schedule);
             return currentTeam;
@@ -246,13 +246,15 @@ public class ParseOps {
             if (round != 1){
                 Collections.shuffle(matches);
             }
+            int x = 1;
             for (Match match : matches){
                 ParseObject parseMatch = new ParseObject("Match");
                 parseMatch.put("Team1", match.getTeam1());
                 parseMatch.put("Team2", match.getTeam2());
                 parseMatch.put("RoundNumber", round);
-                parseMatch.put("matchNumber", matchNum);
+                parseMatch.put("matchNumber", x);
                 parseMatch.saveInBackground();
+                x++;
             }
         }
     }

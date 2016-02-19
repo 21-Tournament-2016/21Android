@@ -10,8 +10,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="##"
         android:id="@+id/txt_rank"
-        android:layout_below="@+id/txt_rankTitle"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,8 +19,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Team Name"
         android:id="@+id/txt_teamName"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/txt_rank"/>
+        android:layout_alignBaseline="@+id/txt_rank"
+        android:layout_alignBottom="@+id/txt_rank"
+        android:layout_toEndOf="@+id/txt_rank"
+        android:paddingStart="2dp"/>
 
     <TextView
         android:layout_width="40dp"
@@ -29,7 +31,7 @@
         android:text="-##"
         android:id="@+id/txt_cd"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -40,7 +40,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="0-0"
         android:id="@+id/lbl_team2Record"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
         android:layout_below="@id/lbl_team2"
         android:layout_alignEnd="@+id/lbl_team2" />
 
@@ -50,7 +50,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="0-0"
         android:id="@+id/lbl_team1Record"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
         android:layout_below="@id/lbl_team1"
         android:layout_alignParentStart="true" />
 

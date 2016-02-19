@@ -11,6 +11,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,13 +35,15 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
     private int lastExpandedGroupPosition = -1;
     ExpandableListView listView;
     private static ProgressDialog dialog;
+    private int height;
 
-    public ScheduleExpandableListAdapter(Context context, List<Round> listDataHeader, ExpandableListView listView, int currentRound){
+    public ScheduleExpandableListAdapter(Context context, List<Round> listDataHeader, ExpandableListView listView, int currentRound, int height){
         this.context = context;
         this.rounds = listDataHeader;
         this.currentRound = currentRound;
         this.matches = rounds.get(currentRound).getMatches();
         this.listView = listView;
+        this.height = height / (matches.size()+1)+20;
     }
 
     @Override
@@ -57,6 +60,8 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = infalInflater.inflate(R.layout.schedule_header_item, null);
+
+        convertView.setMinimumHeight(height);
 
         Match match = matches.get(groupPosition);
         TextView vs = (TextView) convertView.findViewById(R.id.lbl_vs);
@@ -86,6 +91,11 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         } else if (match.getWinner() == 2) {
             lblTeam1.setTextColor(Color.GRAY);
             team2Arrow.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            p.addRule(RelativeLayout.BELOW, R.id.lbl_team1);
+            lblTeam1Record.setLayoutParams(p);
         }
         return convertView;
     }

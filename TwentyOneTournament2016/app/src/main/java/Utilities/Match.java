@@ -109,4 +109,8 @@ public class Match implements Serializable{
     public void setTeam2Record(String team2Record) {
         this.team2Record = team2Record;
     }
+
+    public int getMatchNumber() {
+        return matchNumber;
+    }
 }

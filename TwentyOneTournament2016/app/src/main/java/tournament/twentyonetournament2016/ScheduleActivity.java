@@ -2,9 +2,11 @@ package tournament.twentyonetournament2016;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -54,20 +56,6 @@ public class ScheduleActivity extends ActionBarActivity {
         btn_prevRound.setTextColor(Color.WHITE);
 
         btn_prevRound.setVisibility(View.INVISIBLE);
-        listAdapter = new ScheduleExpandableListAdapter(this, rounds, listView, currentRound);
-
-        // setting list adapter
-        listView.setAdapter(listAdapter);
-
-        listView.setOnTouchListener(new OnSwipeTouchListener(this) {
-            public void onSwipeRight() {
-                prevRound(listView);
-            }
-
-            public void onSwipeLeft() {
-                nextRound(listView);
-            }
-        });
     }
 
     public void pressedTeam1Button(View view)
@@ -147,5 +135,34 @@ public class ScheduleActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        int x = getSupportActionBar().getHeight();
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int height = size.y;
+        int y = btn_nextRound.getHeight();
+
+        listAdapter = new ScheduleExpandableListAdapter(this, rounds, listView, currentRound, height - (x+y));
+
+        // setting list adapter
+        listView.setAdapter(listAdapter);
+
+        listView.setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeRight() {
+                prevRound(listView);
+            }
+
+            public void onSwipeLeft() {
+                nextRound(listView);
+            }
+        });
+
     }
 }

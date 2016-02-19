@@ -3,6 +3,7 @@ package Adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,12 @@ public class StandingsListViewAdapter extends BaseAdapter {
     int teamCount;
     List<Team> teams;
     Context context;
-    public StandingsListViewAdapter(Context context, List<Team> teams) {
+    int height;
+    public StandingsListViewAdapter(Context context, List<Team> teams, int height) {
         this.teams = teams;
         this.context = context;
         teamCount = teams.size();
+        this.height = (height/(teamCount + 1)) - 4;
     }
 
     @Override
@@ -54,6 +57,7 @@ public class StandingsListViewAdapter extends BaseAdapter {
             view.setBackground(new ColorDrawable(Color.DKGRAY));
         }
 
+        view.setMinimumHeight(height);
 
         Team team = teams.get(i);
 
@@ -68,10 +72,19 @@ public class StandingsListViewAdapter extends BaseAdapter {
         teamName.setText(team.getTeamName());
         record.setText(recordString);
         cd.setText(Integer.toString(team.getCD()));
+        rank.setGravity(Gravity.CENTER_VERTICAL);
+        record.setGravity(Gravity.CENTER_VERTICAL);
+        teamName.setGravity(Gravity.CENTER_VERTICAL);
+        cd.setGravity(Gravity.CENTER_VERTICAL);
+        cd.setHeight(height);
+        rank.setHeight(height);
+        teamName.setHeight(height);
+        record.setHeight(height);
 
         if (i % 2 == 0){
             view.setBackground(new ColorDrawable(Color.GRAY));
         }
+
         else {
             view.setBackground(new ColorDrawable(Color.DKGRAY));
             rank.setTextColor(Color.WHITE);
