@@ -11,12 +11,24 @@ public class Team implements Serializable{
     private int wins;
     private int losses;
     private int CD;
+    private String dark;
+    private String light;
 
-    public Team(String teamName, int wins, int losses, int CD){
+    public Team(String teamName, int wins, int losses, int CD, String light, String dark){
         this.teamName = teamName;
         this.wins = wins;
         this.losses = losses;
         this.CD = CD;
+        this.dark = dark;
+        this.light = light;
+    }
+
+    public String getDark() {
+        return dark;
+    }
+
+    public String getLight() {
+        return light;
     }
 
     public String getTeamName() {

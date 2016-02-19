@@ -8,7 +8,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.Serializable;
 import java.util.List;
@@ -46,16 +49,22 @@ public class MainActivity extends ActionBarActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                rounds = ParseOps.getInstance().getSchedule(11);
-                 MainActivity.this.runOnUiThread(new Runnable() {
-                     @Override
-                     public void run() {
-                         dialog.hide();
-                         Intent intent = new Intent(getAppContext(), ScheduleActivity.class);
-                         intent.putExtra("schedule", (Serializable) rounds);
-                         startActivity(intent);
-                     }
-                 });
+                ParseQuery query = new ParseQuery("Team");
+                try {
+                    List<ParseObject> list = query.find();
+                    rounds = ParseOps.getInstance().getSchedule(list.size()-1);
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.hide();
+                            Intent intent = new Intent(getAppContext(), ScheduleActivity.class);
+                            intent.putExtra("schedule", (Serializable) rounds);
+                            startActivity(intent);
+                        }
+                    });
+                } catch (ParseException e){
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

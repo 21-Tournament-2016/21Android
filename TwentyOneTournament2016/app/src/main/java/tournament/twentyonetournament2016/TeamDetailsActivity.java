@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,11 +28,12 @@ public class TeamDetailsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_details);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle extras = getIntent().getExtras();
         team = (TeamDetails) extras.getSerializable("team");
-        getSupportActionBar().setTitle(team.getName());
+        getSupportActionBar().setTitle((Html.fromHtml("<font color=\"#" + team.getLight() + "\">" + team.getName() + "</font>")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + team.getDark())));
+
 
         List<Match> matches = new ArrayList<Match>();
         for (Round round:team.getSchedule())

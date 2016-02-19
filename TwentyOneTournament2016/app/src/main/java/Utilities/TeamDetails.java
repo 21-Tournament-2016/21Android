@@ -18,8 +18,10 @@ public class TeamDetails implements Serializable{
     private String player2;
     private String player3;
     private List<Round> schedule;
+    private String light;
+    private String dark;
 
-    public TeamDetails(String name, int wins, int losses, int cd, int seasons, String player1, String player2, String player3, List<Round> schedule) {
+    public TeamDetails(String name, int wins, int losses, int cd, int seasons, String player1, String player2, String player3, List<Round> schedule, String light, String dark) {
         this.name = name;
         this.wins = wins;
         this.losses = losses;
@@ -29,6 +31,16 @@ public class TeamDetails implements Serializable{
         this.player2 = player2;
         this.player3 = player3;
         this.schedule = schedule;
+        this.light = light;
+        this.dark = dark;
+    }
+
+    public String getLight() {
+        return light;
+    }
+
+    public String getDark() {
+        return dark;
     }
 
     public String getName() {

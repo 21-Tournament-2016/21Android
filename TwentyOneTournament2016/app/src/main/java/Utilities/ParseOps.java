@@ -17,6 +17,7 @@ import java.util.Map;
 public class ParseOps {
 
     private static final ParseOps instance = new ParseOps();
+    static int teamCount;
 
     protected ParseOps(){
 //        Parse.initialize(MainActivity.getAppContext(), "uqmvXiqFfCkv2wwVMm1BGFrVuGqTlPjxbivHSM4N", "Q0hNnGIe0M643J8cQf6AfAVgsvRhMUh0mSa36nTI");
@@ -34,8 +35,9 @@ public class ParseOps {
         query.addDescendingOrder("CD");
         try {
             List<ParseObject> teamsInParse = query.find();
+            teamCount = teamsInParse.size();
             for (ParseObject parseTeam:teamsInParse){
-                Team team = new Team(parseTeam.getString("teamName"), parseTeam.getInt("wins"), parseTeam.getInt("losses"), parseTeam.getInt("CD"));
+                Team team = new Team(parseTeam.getString("teamName"), parseTeam.getInt("wins"), parseTeam.getInt("losses"), parseTeam.getInt("CD"), parseTeam.getString("LightColor"), parseTeam.getString("DarkColor"));
                 teams.add(team);
             }
         } catch (ParseException e){
@@ -176,9 +178,11 @@ public class ParseOps {
             String player1 = parseTeam.getString("player1");
             String player2 = parseTeam.getString("player2");
             String player3 = parseTeam.getString("player3");
-            List<Round> schedule = getSchedule(11, team);
+            String light = parseTeam.getString("LightColor");
+            String dark = parseTeam.getString("DarkColor");
+            List<Round> schedule = getSchedule(teamCount-1, team);
 
-            currentTeam = new TeamDetails(team, wins, losses, CD, seasons, player1, player2, player3, schedule);
+            currentTeam = new TeamDetails(team, wins, losses, CD, seasons, player1, player2, player3, schedule, light, dark);
             return currentTeam;
         } catch (ParseException e){
             e.printStackTrace();
