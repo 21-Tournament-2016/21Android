@@ -10,62 +10,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="tournament.twentyonetournament2016.TeamDetailsActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Team Name"
-        android:id="@+id/txt_teamName"
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/teamPicture"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentStart="true"
+        android:paddingLeft="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="xth tournament"
         android:id="@+id/txt_numTournament"
-        android:layout_below="@+id/txt_teamName"
-        android:layout_centerHorizontal="true"/>
+        android:layout_toRightOf="@id/teamPicture"
+        android:paddingLeft="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="player1"
         android:id="@+id/txt_player1"
         android:layout_below="@+id/txt_numTournament"
-        android:layout_centerHorizontal="true"/>
+        android:layout_toRightOf="@id/teamPicture"
+        android:paddingLeft="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="player2"
         android:id="@+id/txt_player2"
         android:layout_below="@+id/txt_player1"
-        android:layout_centerHorizontal="true"/>
+        android:layout_toRightOf="@id/teamPicture"
+        android:paddingLeft="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="player3"
         android:id="@+id/txt_player3"
         android:layout_below="@+id/txt_player2"
-        android:layout_centerHorizontal="true"/>
+        android:layout_toRightOf="@id/teamPicture"
+        android:paddingLeft="20dp"/>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lv_teamSchedule"
-        android:layout_below="@+id/txt_player3"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/teamPicture"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"/>
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"/>
 </RelativeLayout>

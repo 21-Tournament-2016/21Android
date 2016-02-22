@@ -208,7 +208,7 @@ public class ParseOps {
             }
 
         } catch (ParseException e) {
-
+            e.printStackTrace();
         }
 
         List<Team> teams = getStandings();
@@ -219,12 +219,8 @@ public class ParseOps {
             else if (team.getTeamName().equals("Salisbury")){
                 Collections.swap(teams, 1, teams.indexOf(team));
             }
-            else{
-                continue;
-            }
         }
         List<Team> secondTeams = new ArrayList<Team>(teams);
-        ArrayList<Round> rounds = new ArrayList<>();
         int numTeams = teams.size();
         int numDays = (numTeams - 1); // Days needed to complete tournament
         int halfSize = numTeams / 2;
@@ -279,6 +275,30 @@ public class ParseOps {
         ParsePush push = new ParsePush();
         push.setMessage(String.format("%s has beaten %s by %d cups", winner, loser,match.getInt("CD")));
         push.sendInBackground();
+    }
+
+
+
+    public String getTweets(){
+        String tweetString = "                 ";
+        try {
+            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Twitter");
+            query.orderByDescending("createdAt");
+            List<ParseObject> objects = query.find();
+            for (ParseObject tweet : objects){
+                String currentTweet = tweet.getString("tweet");
+                tweetString = tweetString + "     ・     " + currentTweet;
+            }
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
+        return tweetString;
+    }
+
+    public void sendTweet(String tweet){
+        ParseObject object = new ParseObject("Twitter");
+        object.put("tweet", tweet);
+        object.saveInBackground();
     }
 
 

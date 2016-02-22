@@ -1,6 +1,8 @@
 package Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,17 @@ public class TeamScheduleAdapter extends BaseAdapter {
     Context context;
     List<Match> matches;
     String name;
+    String light;
+    String dark;
+    int height;
 
-    public TeamScheduleAdapter(Context context, List<Match> matches, String name) {
+    public TeamScheduleAdapter(Context context, List<Match> matches, String name, String light, String dark, int height) {
         this.context = context;
         this.matches = matches;
         this.name = name;
+        this.light = light;
+        this.dark = dark;
+        this.height = height / (matches.size()+1) - 20;
     }
 
     @Override
@@ -46,6 +54,9 @@ public class TeamScheduleAdapter extends BaseAdapter {
         LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = infalInflater.inflate(R.layout.team_schedule_item, null);
 
+        view.setBackground(new ColorDrawable(Color.parseColor("#" + dark)));
+        view.setMinimumHeight(height);
+
         Match match = matches.get(i);
 
         TextView roundNumber = (TextView) view.findViewById(R.id.txt_roundNumber);
@@ -58,6 +69,10 @@ public class TeamScheduleAdapter extends BaseAdapter {
         result.setText(getResult(match));
         cupDifferential.setText(Integer.toString(getCupDifferential(match)));
 
+        roundNumber.setTextColor(Color.parseColor("#" + light));
+        opponent.setTextColor(Color.parseColor("#" + light));
+        result.setTextColor(Color.parseColor("#" + light));
+        cupDifferential.setTextColor(Color.parseColor("#" + light));
 
         return view;
     }

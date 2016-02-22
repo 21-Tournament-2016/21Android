@@ -1,11 +1,16 @@
 package tournament.twentyonetournament2016;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -28,6 +33,7 @@ public class MainActivity extends ActionBarActivity {
     private static List<Team> teams;
     private static List<Round> rounds;
     private static ProgressDialog dialog;
+    private static TextView tweetView;
 
     private static TeamDetails teamDetails;
 
@@ -38,6 +44,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         Parse.initialize(this);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+        getTweets();
     }
 
     public static Context getAppContext(){
@@ -103,4 +110,51 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
     }
+
+    public void getTweets(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String tweets = ParseOps.getInstance().getTweets();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tweetView = (TextView) findViewById(R.id.txt_tweets);
+                        tweetView.setText(tweets);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void onResume(){
+        super.onResume();
+        getTweets();
+    }
+
+    public void showTwitterDialog(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final TextView text = new TextView(this);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String tweet = input.getText().toString();
+                ParseOps.getInstance().sendTweet(tweet);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+
 }
