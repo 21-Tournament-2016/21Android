@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -133,10 +132,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void showTwitterDialog(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final TextView text = new TextView(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Tweet!");
+        builder.setMessage("Please enter your tweet:");
+
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+
         builder.setView(input);
 
         builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
@@ -147,12 +148,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, null);
         builder.show();
     }
 
