@@ -301,5 +301,82 @@ public class ParseOps {
         object.saveInBackground();
     }
 
+//    public List<Round> getPlayoffs(){
+//
+//    }
+
+    public void startPlayoffs(){
+        List<Team> teams = getStandings();
+
+        int[] twos = {2,4,8,16,32,64};
+        int teamCount = teams.size();
+        int roundCount = 0;
+        int numByes = 0;
+        int firstRealRoundCount = 0;
+
+        for (int i = 0; i < twos.length; i++){
+            if (teamCount <= twos[i]){
+                roundCount = i+1;
+                numByes = twos[i]-teamCount;
+                firstRealRoundCount = twos[i-1]/2;
+                break;
+            }
+        }
+        List<Team> firstRoundTeams;
+        List<Team> byeTeams;
+        if (numByes != 0){
+            byeTeams = teams.subList(0,numByes);
+            firstRoundTeams = teams.subList(numByes, teams.size());
+        }
+        else {
+            firstRoundTeams = teams;
+            byeTeams = new ArrayList<>();
+        }
+
+
+        int currentRound = 1;
+        int numMatchesInNextRound = firstRoundTeams.size()/2;
+        while (currentRound <= roundCount){
+            int currentMatch = 0;
+            if (numByes != 0 && currentRound == 2){
+                while (currentMatch < numMatchesInNextRound){
+                    ParseObject parseMatch = new ParseObject("PlayoffMatch");
+                    if (currentMatch < byeTeams.size()){
+                        parseMatch.put("Team1", byeTeams.get(currentMatch).getTeamName());
+                    }
+                    parseMatch.put("RoundNumber", currentRound);
+                    parseMatch.put("MatchNumber", currentMatch+1);
+                    parseMatch.saveInBackground();
+                    currentMatch++;
+                }
+                numMatchesInNextRound = numMatchesInNextRound/2;
+            }
+            else {
+                while (currentMatch < numMatchesInNextRound){
+                    ParseObject parseMatch = new ParseObject("PlayoffMatch");
+                    if (currentRound == 1) {
+                        parseMatch.put("Team1", firstRoundTeams.get(currentMatch).getTeamName());
+                        parseMatch.put("Team2", firstRoundTeams.get(firstRoundTeams.size() - (currentMatch + 1)).getTeamName());
+                    }
+                    parseMatch.put("RoundNumber", currentRound);
+                    parseMatch.put("MatchNumber", currentMatch+1);
+                    parseMatch.saveInBackground();
+                    currentMatch++;
+                }
+                if(currentRound == 1 && numByes != 0){
+                    numMatchesInNextRound = firstRealRoundCount;
+                }
+                else {
+                    numMatchesInNextRound = numMatchesInNextRound/2;
+                }
+            }
+
+            currentRound++;
+        }
+
+
+
+    }
+
 
 }

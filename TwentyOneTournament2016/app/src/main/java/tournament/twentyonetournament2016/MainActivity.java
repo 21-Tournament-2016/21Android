@@ -156,5 +156,9 @@ public class MainActivity extends ActionBarActivity {
         builder.show();
     }
 
+    public void startPlayoffs(View view){
+        ParseOps.getInstance().startPlayoffs();
+    }
+
 
 }
