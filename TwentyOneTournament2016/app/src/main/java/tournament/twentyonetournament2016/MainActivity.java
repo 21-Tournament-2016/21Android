@@ -65,6 +65,7 @@ public class MainActivity extends ActionBarActivity {
                             dialog.hide();
                             Intent intent = new Intent(getAppContext(), ScheduleActivity.class);
                             intent.putExtra("schedule", (Serializable) rounds);
+                            intent.putExtra("type", "schedule");
                             startActivity(intent);
                         }
                     });
@@ -154,6 +155,26 @@ public class MainActivity extends ActionBarActivity {
 
     public void startPlayoffs(View view){
         ParseOps.getInstance().startPlayoffs();
+    }
+
+    public void loadPlayoffs(View view){
+        dialog = ProgressDialog.show(MainActivity.this, "", "Retrieving Playoff Schedule...", true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Round> playoffs = ParseOps.getInstance().getPlayoffs();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.hide();
+                        Intent intent = new Intent(getAppContext(), ScheduleActivity.class);
+                        intent.putExtra("schedule", (Serializable) playoffs);
+                        intent.putExtra("type", "playoffs");
+                        startActivity(intent);
+                    }
+                });
+            }
+        }).start();
     }
 
 

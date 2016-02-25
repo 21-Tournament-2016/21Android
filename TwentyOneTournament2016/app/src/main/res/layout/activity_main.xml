@@ -63,6 +63,6 @@
         android:id="@+id/button"
         android:layout_below="@+id/btn_tweet"
         android:layout_centerHorizontal="true"
-        android:onClick="startPlayoffs"/>
+        android:onClick="loadPlayoffs"/>
 
 </RelativeLayout>

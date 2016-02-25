@@ -69,7 +69,7 @@ public class ParseOps {
                     Match match = new Match(parseMatch.getObjectId(), parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getString("Team1ID"), parseMatch.getString("Team2ID"), parseMatch.getInt("Winner"), parseMatch.getInt("CD"), dictionary.get(parseMatch.getString("Team1")), dictionary.get(parseMatch.getString("Team2")));
                     matches.add(match);
                 }
-                Round round = new Round(numberOfRounds, matches);
+                Round round = new Round(currentRound, matches);
                 schedule.add(round);
                 currentRound++;
             }
@@ -301,9 +301,43 @@ public class ParseOps {
         object.saveInBackground();
     }
 
-//    public List<Round> getPlayoffs(){
-//
-//    }
+    public List<Round> getPlayoffs(){
+        List<Team> teams = getStandings();
+
+        int[] twos = {2,4,8,16,32,64};
+        int teamCount = teams.size();
+        int roundCount = 0;
+
+
+        for (int i = 0; i < twos.length; i++){
+            if (teamCount <= twos[i]){
+                roundCount = i+1;
+                break;
+            }
+        }
+
+        List<Round> schedule = new ArrayList<Round>();
+        int currentRound = 1;
+        try{
+            while (currentRound <= roundCount) {
+                ArrayList<Match> matches = new ArrayList<Match>();
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("PlayoffMatch");
+                query.whereEqualTo("RoundNumber", currentRound);
+                query.addAscendingOrder("MatchNumber");
+                List<ParseObject> matchesInParse = query.find();
+                for (ParseObject parseMatch:matchesInParse) {
+                    Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"));
+                    matches.add(match);
+                }
+                Round round = new Round(currentRound, matches);
+                schedule.add(round);
+                currentRound++;
+            }
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
+        return schedule;
+    }
 
     public void startPlayoffs(){
         List<Team> teams = getStandings();
@@ -374,8 +408,21 @@ public class ParseOps {
             currentRound++;
         }
 
+    }
 
-
+    public void savePlayoffMatch(String objectID, int winner, int CD){
+        /*
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("PlayoffMatch");
+        try {
+            ParseObject match = query.get(objectID);
+            match.put("Winner", winner);
+            match.put("CD", CD);
+            match.save();
+            sendPush(match);
+            startStandingsUpdate(match);
+        } catch (ParseException e){
+            e.printStackTrace();
+        }*/
     }
 
 

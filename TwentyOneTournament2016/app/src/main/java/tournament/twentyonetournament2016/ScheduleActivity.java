@@ -31,6 +31,7 @@ public class ScheduleActivity extends ActionBarActivity {
     Button btn_prevRound;
     Button btn_nextRound;
     TextView blankspace;
+    String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class ScheduleActivity extends ActionBarActivity {
         getWindow().getDecorView().setBackgroundColor(Color.BLACK);
         Bundle extras = getIntent().getExtras();
         rounds = (List<Round>) extras.getSerializable("schedule");
+        type = (String) extras.getSerializable("type");
         currentRound = 0;
         getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
@@ -75,7 +77,12 @@ public class ScheduleActivity extends ActionBarActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ParseOps.getInstance().saveMatch(objectId, winner, cd);
+                if (type.equals("schedule")) {
+                    ParseOps.getInstance().saveMatch(objectId, winner, cd);
+                }
+                else if (type.equals("playoffs")){
+                    ParseOps.getInstance().savePlayoffMatch(objectId,winner,cd);
+                }
                 ScheduleActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -149,7 +156,7 @@ public class ScheduleActivity extends ActionBarActivity {
         int height = size.y;
         int y = btn_nextRound.getHeight();
 
-        listAdapter = new ScheduleExpandableListAdapter(this, rounds, listView, currentRound, height - (x+y));
+        listAdapter = new ScheduleExpandableListAdapter(this, rounds, listView, currentRound, height - (x + y), type);
 
         // setting list adapter
         listView.setAdapter(listAdapter);

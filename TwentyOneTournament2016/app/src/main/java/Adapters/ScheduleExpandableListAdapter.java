@@ -36,14 +36,16 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
     ExpandableListView listView;
     private static ProgressDialog dialog;
     private int height;
+    private String type;
 
-    public ScheduleExpandableListAdapter(Context context, List<Round> listDataHeader, ExpandableListView listView, int currentRound, int height){
+    public ScheduleExpandableListAdapter(Context context, List<Round> listDataHeader, ExpandableListView listView, int currentRound, int height, String type){
         this.context = context;
         this.rounds = listDataHeader;
         this.currentRound = currentRound;
         this.matches = rounds.get(currentRound).getMatches();
         this.listView = listView;
         this.height = height / (matches.size()+1)+20;
+        this.type = type;
     }
 
     @Override
@@ -144,13 +146,17 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
                 match.setCupDifferential(Integer.parseInt((String) cups.getText()));
                 if (team1Button.isChecked()) {
                     match.setWinner(1);
-                    match.setTeam1Record(updateStandingsString(match.getTeam1Record(), true));
-                    match.setTeam2Record(updateStandingsString(match.getTeam2Record(), false));
+                    if (type.equals("schedule")) {
+                        match.setTeam1Record(updateStandingsString(match.getTeam1Record(), true));
+                        match.setTeam2Record(updateStandingsString(match.getTeam2Record(), false));
+                    }
                     ((ScheduleActivity) context).saveMatch(match.getObjectID(), 1, Integer.parseInt((String) cups.getText()));
                 } else if (team2Button.isChecked()) {
                     match.setWinner(2);
-                    match.setTeam2Record(updateStandingsString(match.getTeam2Record(), true));
-                    match.setTeam1Record(updateStandingsString(match.getTeam1Record(), false));
+                    if (type.equals("schedule")) {
+                        match.setTeam2Record(updateStandingsString(match.getTeam2Record(), true));
+                        match.setTeam1Record(updateStandingsString(match.getTeam1Record(), false));
+                    }
                     ((ScheduleActivity) context).saveMatch(match.getObjectID(), 2, Integer.parseInt((String) cups.getText()));
                 } else {
                     Toast.makeText(context, "You must select a match winner", Toast.LENGTH_LONG).show();
