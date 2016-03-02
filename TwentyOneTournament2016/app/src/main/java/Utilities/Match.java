@@ -31,11 +31,23 @@ public class Match implements Serializable{
         this.team2Record = team2Record;
     }
 
-    public Match (String team1, String team2, int round, int matchNumber){
+    public Match (String team1, String team2, int round, int matchNumber, int cupDifferential, int winner, String objectID){
         this.team1 = team1;
         this.team2 = team2;
         this.round = round;
         this.matchNumber = matchNumber;
+        this.cupDifferential = cupDifferential;
+        this.winner = winner;
+        this.objectID = objectID;
+    }
+
+    public Match (String team1, String team2, int round, int matchNumber, int cupDifferential, int winner){
+        this.team1 = team1;
+        this.team2 = team2;
+        this.round = round;
+        this.matchNumber = matchNumber;
+        this.cupDifferential = cupDifferential;
+        this.winner = winner;
     }
 
     public String getObjectID() {

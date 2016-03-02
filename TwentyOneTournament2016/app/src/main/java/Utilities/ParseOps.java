@@ -193,6 +193,7 @@ public class ParseOps {
     public void restartTournament() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
         ParseQuery<ParseObject> matchQuery = ParseQuery.getQuery("Match");
+        ParseQuery<ParseObject> playoffQuery = ParseQuery.getQuery("PlayoffMatch");
         try {
             List<ParseObject> parseTeams = query.find();
             for (ParseObject parseTeam : parseTeams){
@@ -205,6 +206,10 @@ public class ParseOps {
             for (ParseObject parseMatch : parseMatches){
                 parseMatch.deleteInBackground();
                 parseMatch.saveInBackground();
+            }
+            List<ParseObject> parsePlayoffs = playoffQuery.find();
+            for (ParseObject playoffMatch :parsePlayoffs){
+                playoffMatch.deleteInBackground();
             }
 
         } catch (ParseException e) {
@@ -235,14 +240,14 @@ public class ParseOps {
             int round = day+1;
             int matchNum = 1;
             int teamIdx = day % teamsSize;
-            Match firstMatch = new Match(teams.get(0).getTeamName(), secondTeams.get(teamIdx).getTeamName(), round, matchNum);
+            Match firstMatch = new Match(teams.get(0).getTeamName(), secondTeams.get(teamIdx).getTeamName(), round, matchNum, 0, 0);
             matches.add(firstMatch);
             for (int idx = 1; idx < halfSize; idx++)
             {
                 matchNum++;
                 int firstTeam = (day + idx) % teamsSize;
                 int secondTeam = (day  + teamsSize - idx) % teamsSize;
-                Match otherMatch = new Match(secondTeams.get(firstTeam).getTeamName(), secondTeams.get(secondTeam).getTeamName(), round, matchNum);
+                Match otherMatch = new Match(secondTeams.get(firstTeam).getTeamName(), secondTeams.get(secondTeam).getTeamName(), round, matchNum, 0, 0);
                 matches.add(otherMatch);
             }
             if (round != 1){
@@ -302,6 +307,12 @@ public class ParseOps {
     }
 
     public List<Round> getPlayoffs(){
+        startPlayoffs();
+        try {
+            wait(3000);
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
         List<Team> teams = getStandings();
 
         int[] twos = {2,4,8,16,32,64};
@@ -326,7 +337,7 @@ public class ParseOps {
                 query.addAscendingOrder("MatchNumber");
                 List<ParseObject> matchesInParse = query.find();
                 for (ParseObject parseMatch:matchesInParse) {
-                    Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"));
+                    Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"), parseMatch.getInt("CD"), parseMatch.getInt("Winner"), parseMatch.getObjectId());
                     matches.add(match);
                 }
                 Round round = new Round(currentRound, matches);
@@ -411,7 +422,6 @@ public class ParseOps {
     }
 
     public void savePlayoffMatch(String objectID, int winner, int CD){
-        /*
         ParseQuery<ParseObject> query = ParseQuery.getQuery("PlayoffMatch");
         try {
             ParseObject match = query.get(objectID);
@@ -419,10 +429,30 @@ public class ParseOps {
             match.put("CD", CD);
             match.save();
             sendPush(match);
-            startStandingsUpdate(match);
+            int matchNum = match.getInt("MatchNumber");
+            ParseQuery<ParseObject> nextMatchQuery = ParseQuery.getQuery("PlayoffMatch");
+            nextMatchQuery.whereEqualTo("RoundNumber", match.getInt("RoundNumber")+1);
+            int nextMatchNum;
+            String teamSpot;
+            if (matchNum%2 == 0){
+                nextMatchNum = matchNum/2;
+                teamSpot = "Team2";
+            }
+            else{
+                nextMatchNum = matchNum-1;
+                teamSpot = "Team1";
+            }
+            nextMatchQuery.whereEqualTo("MatchNumber", nextMatchNum);
+            ParseObject nextMatch = nextMatchQuery.find().get(0);
+            if (winner == 1){
+                nextMatch.put(teamSpot, match.getString("Team1"));
+            }
+            else if (winner == 2){
+                nextMatch.put(teamSpot, match.getString("Team2"));
+            }
         } catch (ParseException e){
             e.printStackTrace();
-        }*/
+        }
     }
 
 

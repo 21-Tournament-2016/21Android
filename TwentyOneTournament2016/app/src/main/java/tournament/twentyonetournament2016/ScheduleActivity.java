@@ -58,6 +58,9 @@ public class ScheduleActivity extends ActionBarActivity {
         btn_prevRound.setTextColor(Color.WHITE);
 
         btn_prevRound.setVisibility(View.INVISIBLE);
+        if (type.equals("playoffs")){
+            blankspace.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void pressedTeam1Button(View view)
