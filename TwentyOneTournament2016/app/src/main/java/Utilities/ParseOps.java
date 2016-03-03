@@ -2,7 +2,6 @@ package Utilities;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -18,6 +17,9 @@ public class ParseOps {
 
     private static final ParseOps instance = new ParseOps();
     static int teamCount;
+    static int numberOfRounds;
+    static int currentScheduleRound;
+    static int currentPlayoffRound;
 
     protected ParseOps(){
 //        Parse.initialize(MainActivity.getAppContext(), "uqmvXiqFfCkv2wwVMm1BGFrVuGqTlPjxbivHSM4N", "Q0hNnGIe0M643J8cQf6AfAVgsvRhMUh0mSa36nTI");
@@ -26,6 +28,14 @@ public class ParseOps {
 
     public static ParseOps getInstance(){
         return instance;
+    }
+
+    public static int getCurrentPlayoffRound() {
+        return currentPlayoffRound;
+    }
+
+    public static int getCurrentScheduleRound() {
+        return currentScheduleRound;
     }
 
     public List<Team> getStandings(){
@@ -59,6 +69,7 @@ public class ParseOps {
                 String record = String.format("%d-%d", wins, losses);
                 dictionary.put(team.getString("teamName"), record);
             }
+            boolean hasRoundBeenSet = false;
             while (currentRound <= numberOfRounds) {
                 ArrayList<Match> matches = new ArrayList<Match>();
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Match");
@@ -68,6 +79,10 @@ public class ParseOps {
                 for (ParseObject parseMatch:matchesInParse) {
                     Match match = new Match(parseMatch.getObjectId(), parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getString("Team1ID"), parseMatch.getString("Team2ID"), parseMatch.getInt("Winner"), parseMatch.getInt("CD"), dictionary.get(parseMatch.getString("Team1")), dictionary.get(parseMatch.getString("Team2")));
                     matches.add(match);
+                    if (parseMatch.getInt("Winner") == 0 && !hasRoundBeenSet){
+                        hasRoundBeenSet = true;
+                        currentScheduleRound = currentRound;
+                    }
                 }
                 Round round = new Round(currentRound, matches);
                 schedule.add(round);
@@ -118,7 +133,6 @@ public class ParseOps {
             match.put("Winner", winner);
             match.put("CD", CD);
             match.save();
-            sendPush(match);
             startStandingsUpdate(match);
         } catch (ParseException e){
             e.printStackTrace();
@@ -260,29 +274,13 @@ public class ParseOps {
                 parseMatch.put("Team2", match.getTeam2());
                 parseMatch.put("RoundNumber", round);
                 parseMatch.put("matchNumber", x);
+                parseMatch.put("CD", 0);
+                parseMatch.put("Winner", 0);
                 parseMatch.saveInBackground();
                 x++;
             }
         }
     }
-
-    public void sendPush(ParseObject match){
-        String winner;
-        String loser;
-        if (match.getInt("Winner") == 1){
-            winner = match.getString("Team1");
-            loser = match.getString("Team2");
-        }
-        else{
-            loser = match.getString("Team1");
-            winner = match.getString("Team2");
-        }
-        ParsePush push = new ParsePush();
-        push.setMessage(String.format("%s has beaten %s by %d cups", winner, loser,match.getInt("CD")));
-        push.sendInBackground();
-    }
-
-
 
     public String getTweets(){
         String tweetString = "                 ";
@@ -303,16 +301,14 @@ public class ParseOps {
     public void sendTweet(String tweet){
         ParseObject object = new ParseObject("Twitter");
         object.put("tweet", tweet);
-        object.saveInBackground();
+        try {
+            object.save();
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
     }
 
     public List<Round> getPlayoffs(){
-        startPlayoffs();
-        try {
-            wait(3000);
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        }
         List<Team> teams = getStandings();
 
         int[] twos = {2,4,8,16,32,64};
@@ -330,6 +326,7 @@ public class ParseOps {
         List<Round> schedule = new ArrayList<Round>();
         int currentRound = 1;
         try{
+            boolean hasRoundBeenSet = false;
             while (currentRound <= roundCount) {
                 ArrayList<Match> matches = new ArrayList<Match>();
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("PlayoffMatch");
@@ -339,11 +336,16 @@ public class ParseOps {
                 for (ParseObject parseMatch:matchesInParse) {
                     Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"), parseMatch.getInt("CD"), parseMatch.getInt("Winner"), parseMatch.getObjectId());
                     matches.add(match);
+                    if (parseMatch.getInt("Winner") == 0 && !hasRoundBeenSet){
+                        hasRoundBeenSet = true;
+                        currentPlayoffRound = currentRound;
+                    }
                 }
                 Round round = new Round(currentRound, matches);
                 schedule.add(round);
                 currentRound++;
             }
+            numberOfRounds = currentRound-1;
         } catch (ParseException e){
             e.printStackTrace();
         }
@@ -351,6 +353,7 @@ public class ParseOps {
     }
 
     public void startPlayoffs(){
+        currentPlayoffRound = 1;
         List<Team> teams = getStandings();
 
         int[] twos = {2,4,8,16,32,64};
@@ -428,28 +431,43 @@ public class ParseOps {
             match.put("Winner", winner);
             match.put("CD", CD);
             match.save();
-            sendPush(match);
+            if (match.getInt("RoundNumber") >= numberOfRounds)
+            {
+                return;
+            }
             int matchNum = match.getInt("MatchNumber");
             ParseQuery<ParseObject> nextMatchQuery = ParseQuery.getQuery("PlayoffMatch");
             nextMatchQuery.whereEqualTo("RoundNumber", match.getInt("RoundNumber")+1);
-            int nextMatchNum;
+            double nextMatchNum;
             String teamSpot;
-            if (matchNum%2 == 0){
-                nextMatchNum = matchNum/2;
+
+            if (match.getInt("RoundNumber") == 1) {
+                nextMatchNum = matchNum;
                 teamSpot = "Team2";
             }
-            else{
-                nextMatchNum = matchNum-1;
-                teamSpot = "Team1";
+            else {
+                if (matchNum % 2 == 0) {
+                    nextMatchNum = matchNum / 2;
+                    teamSpot = "Team2";
+                } else {
+                    nextMatchNum = (matchNum / 2.0) + 0.5;
+                    teamSpot = "Team1";
+                }
             }
             nextMatchQuery.whereEqualTo("MatchNumber", nextMatchNum);
             ParseObject nextMatch = nextMatchQuery.find().get(0);
-            if (winner == 1){
-                nextMatch.put(teamSpot, match.getString("Team1"));
+            if (match.getInt("RoundNumber") == 1){
+                String winnerString = String.format("Team%d", winner);
+                nextMatch.put(teamSpot,match.getString(winnerString));
             }
-            else if (winner == 2){
-                nextMatch.put(teamSpot, match.getString("Team2"));
+            else {
+                if (winner == 1) {
+                    nextMatch.put(teamSpot, match.getString("Team1"));
+                } else if (winner == 2) {
+                    nextMatch.put(teamSpot, match.getString("Team2"));
+                }
             }
+            nextMatch.saveInBackground();
         } catch (ParseException e){
             e.printStackTrace();
         }

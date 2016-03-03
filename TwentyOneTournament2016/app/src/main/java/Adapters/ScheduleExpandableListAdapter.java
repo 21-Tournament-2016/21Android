@@ -82,6 +82,11 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         lblTeam2.setText(match.getTeam2());
         lblTeam1Record.setText(match.getTeam1Record());
         lblTeam2Record.setText(match.getTeam2Record());
+
+        if (type.equals("playoffs")){
+            lblwinnerCupDifferential.setVisibility(View.INVISIBLE);
+        }
+
         if (match.getWinner() != 0) {
             lblwinnerCupDifferential.setText(String.format("%d cups", match.getCupDifferential()));
         } else {

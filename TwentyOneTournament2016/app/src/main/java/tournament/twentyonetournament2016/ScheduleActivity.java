@@ -41,7 +41,12 @@ public class ScheduleActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
         rounds = (List<Round>) extras.getSerializable("schedule");
         type = (String) extras.getSerializable("type");
-        currentRound = 0;
+        if (type.equals("schedule")){
+            currentRound = ParseOps.getCurrentScheduleRound() - 1;
+        }
+        else if (type.equals("playoffs")){
+            currentRound = ParseOps.getCurrentPlayoffRound() - 1;
+        }
         getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,8 +89,12 @@ public class ScheduleActivity extends ActionBarActivity {
                     ParseOps.getInstance().saveMatch(objectId, winner, cd);
                 }
                 else if (type.equals("playoffs")){
-                    ParseOps.getInstance().savePlayoffMatch(objectId,winner,cd);
-                }
+                    ParseOps.getInstance().savePlayoffMatch(objectId, winner, cd);
+                    if (currentRound < rounds.size()-1) {
+                        Round newRound = ParseOps.getInstance().getPlayoffs().get(currentRound + 1);
+                        rounds.set(currentRound + 1, newRound);
+                    }
+            }
                 ScheduleActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
