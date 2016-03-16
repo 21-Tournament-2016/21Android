@@ -14,6 +14,10 @@ import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import java.util.List;
 
 import Adapters.OnSwipeTouchListener;
@@ -32,6 +36,7 @@ public class ScheduleActivity extends ActionBarActivity {
     Button btn_nextRound;
     TextView blankspace;
     String type;
+    private boolean paused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,5 +188,39 @@ public class ScheduleActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        paused = true;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        if (paused) {
+            dialog = ProgressDialog.show(ScheduleActivity.this, "", "Retrieving Schedule...", true);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ParseQuery query = new ParseQuery("Team");
+                    try {
+                        List<ParseObject> list = query.find();
+                        rounds = ParseOps.getInstance().getSchedule(list.size() - 1);
+                        ScheduleActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.hide();
+                            }
+                        });
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            paused = false;
+        }
     }
 }

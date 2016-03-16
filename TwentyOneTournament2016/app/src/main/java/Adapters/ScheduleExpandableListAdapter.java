@@ -88,7 +88,8 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         if (match.getWinner() != 0) {
-            lblwinnerCupDifferential.setText(String.format("%d cups", match.getCupDifferential()));
+            String cups = (match.getCupDifferential() == 1) ? "cup" : "cups";
+            lblwinnerCupDifferential.setText(String.format("%d %s", match.getCupDifferential(), cups));
         } else {
             lblwinnerCupDifferential.setVisibility(View.GONE);
         }

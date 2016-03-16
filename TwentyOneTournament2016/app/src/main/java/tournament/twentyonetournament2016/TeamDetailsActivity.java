@@ -97,7 +97,7 @@ public class TeamDetailsActivity extends ActionBarActivity {
 
         ImageView img = (ImageView) findViewById(R.id.teamPicture);
 
-        String imageName = team.getName().toLowerCase();
+        String imageName = team.getName().split("\\s+")[0].toLowerCase();
         int resID = getResources().getIdentifier(imageName, "drawable", this.getPackageName());
 
         seasons.setText(getSeasonString(team.getSeasons()));

@@ -390,7 +390,23 @@ public class ParseOps {
                 while (currentMatch < numMatchesInNextRound){
                     ParseObject parseMatch = new ParseObject("PlayoffMatch");
                     if (currentMatch < byeTeams.size()){
-                        parseMatch.put("Team1", byeTeams.get(currentMatch).getTeamName());
+                        switch(currentMatch){
+                            case 0:
+                                parseMatch.put("Team1", byeTeams.get(currentMatch).getTeamName());
+                                break;
+                            case 1:
+                                parseMatch.put("Team1", byeTeams.get(3).getTeamName());
+                                break;
+                            case 2:
+                                parseMatch.put("Team1", byeTeams.get(1).getTeamName());
+                                break;
+                            case 3:
+                                parseMatch.put("Team1", byeTeams.get(2).getTeamName());
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
                     parseMatch.put("RoundNumber", currentRound);
                     parseMatch.put("MatchNumber", currentMatch+1);
@@ -400,6 +416,7 @@ public class ParseOps {
                 numMatchesInNextRound = numMatchesInNextRound/2;
             }
             else {
+                int actualMatchNum = numMatchesInNextRound;
                 while (currentMatch < numMatchesInNextRound){
                     ParseObject parseMatch = new ParseObject("PlayoffMatch");
                     if (currentRound == 1) {
@@ -407,9 +424,10 @@ public class ParseOps {
                         parseMatch.put("Team2", firstRoundTeams.get(firstRoundTeams.size() - (currentMatch + 1)).getTeamName());
                     }
                     parseMatch.put("RoundNumber", currentRound);
-                    parseMatch.put("MatchNumber", currentMatch+1);
+                    parseMatch.put("MatchNumber", actualMatchNum);
                     parseMatch.saveInBackground();
                     currentMatch++;
+                    actualMatchNum--;
                 }
                 if(currentRound == 1 && numByes != 0){
                     numMatchesInNextRound = firstRealRoundCount;
