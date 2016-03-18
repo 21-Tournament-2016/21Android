@@ -67,9 +67,16 @@ public class ScheduleActivity extends ActionBarActivity {
         btn_prevRound.setBackground(new ColorDrawable(Color.RED));
         btn_prevRound.setTextColor(Color.WHITE);
 
-        btn_prevRound.setVisibility(View.INVISIBLE);
+        if (currentRound == 0) {
+            btn_prevRound.setVisibility(View.INVISIBLE);
+        }
+        else if (currentRound == 10){
+            btn_nextRound.setVisibility(View.INVISIBLE);
+        }
         if (type.equals("playoffs")){
             blankspace.setVisibility(View.INVISIBLE);
+            listView.setDivider(null);
+            listView.setDividerHeight(0);
         }
     }
 
@@ -85,7 +92,7 @@ public class ScheduleActivity extends ActionBarActivity {
         team1Button.setChecked(false);
     }
 
-    public void saveMatch(final String objectId, final int winner, final int cd){
+    public void saveMatch(final String objectId, final int winner, final int cd, final int seed1, final int seed2){
         dialog = ProgressDialog.show(ScheduleActivity.this, "", "Saving Match...", true);
         new Thread(new Runnable() {
             @Override
@@ -94,7 +101,7 @@ public class ScheduleActivity extends ActionBarActivity {
                     ParseOps.getInstance().saveMatch(objectId, winner, cd);
                 }
                 else if (type.equals("playoffs")){
-                    ParseOps.getInstance().savePlayoffMatch(objectId, winner, cd);
+                    ParseOps.getInstance().savePlayoffMatch(objectId, winner, cd, seed1, seed2);
                     if (currentRound < rounds.size()-1) {
                         Round newRound = ParseOps.getInstance().getPlayoffs().get(currentRound + 1);
                         rounds.set(currentRound + 1, newRound);
@@ -111,42 +118,42 @@ public class ScheduleActivity extends ActionBarActivity {
         }).start();
     }
 
-    public void nextRound(View view)
-    {
-        int count =  listAdapter.getGroupCount();
-        for (int i = 0; i <count ; i++)
-            listView.collapseGroup(i);
-        btn_prevRound.setVisibility(View.VISIBLE);
-        currentRound = currentRound + 1;
-        if (currentRound < rounds.size() - 1) {
-            listAdapter.setCurrentRound(currentRound);
-            listAdapter.notifyDataSetChanged();
+    public void nextRound(View view) {
+        if ((type.equals("schedule") && currentRound != 10) || (type.equals("playoffs") && currentRound != 3)) {
+            int count = listAdapter.getGroupCount();
+            for (int i = 0; i < count; i++)
+                listView.collapseGroup(i);
+            btn_prevRound.setVisibility(View.VISIBLE);
+            currentRound = currentRound + 1;
+            if (currentRound < rounds.size() - 1) {
+                listAdapter.setCurrentRound(currentRound);
+                listAdapter.notifyDataSetChanged();
+            } else {
+                listAdapter.setCurrentRound(currentRound);
+                listAdapter.notifyDataSetChanged();
+                btn_nextRound.setVisibility(View.INVISIBLE);
+            }
+            getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
         }
-        else {
-            listAdapter.setCurrentRound(currentRound);
-            listAdapter.notifyDataSetChanged();
-            btn_nextRound.setVisibility(View.INVISIBLE);
-        }
-        getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
     }
 
-    public void prevRound(View view)
-    {
-        int count =  listAdapter.getGroupCount();
-        for (int i = 0; i <count ; i++)
-            listView.collapseGroup(i);
-        btn_nextRound.setVisibility(View.VISIBLE);
-        currentRound = currentRound - 1;
-        if (currentRound == 0) {
-            listAdapter.setCurrentRound(currentRound);
-            listAdapter.notifyDataSetChanged();
-            btn_prevRound.setVisibility(View.INVISIBLE);
+    public void prevRound(View view) {
+        if (currentRound != 0) {
+            int count = listAdapter.getGroupCount();
+            for (int i = 0; i < count; i++)
+                listView.collapseGroup(i);
+            btn_nextRound.setVisibility(View.VISIBLE);
+            currentRound = currentRound - 1;
+            if (currentRound == 0) {
+                listAdapter.setCurrentRound(currentRound);
+                listAdapter.notifyDataSetChanged();
+                btn_prevRound.setVisibility(View.INVISIBLE);
+            } else {
+                listAdapter.setCurrentRound(currentRound);
+                listAdapter.notifyDataSetChanged();
+            }
+            getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
         }
-        else {
-            listAdapter.setCurrentRound(currentRound);
-            listAdapter.notifyDataSetChanged();
-        }
-        getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
     }
 
     @Override
@@ -200,7 +207,7 @@ public class ScheduleActivity extends ActionBarActivity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        if (paused) {
+        if (paused && type.equals("schedule")) {
             dialog = ProgressDialog.show(ScheduleActivity.this, "", "Retrieving Schedule...", true);
             new Thread(new Runnable() {
                 @Override

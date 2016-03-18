@@ -334,7 +334,7 @@ public class ParseOps {
                 query.addAscendingOrder("MatchNumber");
                 List<ParseObject> matchesInParse = query.find();
                 for (ParseObject parseMatch:matchesInParse) {
-                    Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"), parseMatch.getInt("CD"), parseMatch.getInt("Winner"), parseMatch.getObjectId());
+                    Match match = new Match(parseMatch.getString("Team1"), parseMatch.getString("Team2"), parseMatch.getInt("RoundNumber"), parseMatch.getInt("MatchNumber"), parseMatch.getInt("CD"), parseMatch.getInt("Winner"), parseMatch.getObjectId(), parseMatch.getInt("Seed"), parseMatch.getInt("Seed2"));
                     matches.add(match);
                     if (parseMatch.getInt("Winner") == 0 && !hasRoundBeenSet){
                         hasRoundBeenSet = true;
@@ -393,15 +393,23 @@ public class ParseOps {
                         switch(currentMatch){
                             case 0:
                                 parseMatch.put("Team1", byeTeams.get(currentMatch).getTeamName());
+                                parseMatch.put("Seed", 1);
+                                parseMatch.put("Team2", "TBD");
                                 break;
                             case 1:
                                 parseMatch.put("Team1", byeTeams.get(3).getTeamName());
+                                parseMatch.put("Seed", 4);
+                                parseMatch.put("Team2", "TBD");
                                 break;
                             case 2:
                                 parseMatch.put("Team1", byeTeams.get(1).getTeamName());
+                                parseMatch.put("Seed", 2);
+                                parseMatch.put("Team2", "TBD");
                                 break;
                             case 3:
                                 parseMatch.put("Team1", byeTeams.get(2).getTeamName());
+                                parseMatch.put("Seed", 3);
+                                parseMatch.put("Team2", "TBD");
                                 break;
                             default:
                                 break;
@@ -420,8 +428,38 @@ public class ParseOps {
                 while (currentMatch < numMatchesInNextRound){
                     ParseObject parseMatch = new ParseObject("PlayoffMatch");
                     if (currentRound == 1) {
-                        parseMatch.put("Team1", firstRoundTeams.get(currentMatch).getTeamName());
-                        parseMatch.put("Team2", firstRoundTeams.get(firstRoundTeams.size() - (currentMatch + 1)).getTeamName());
+                        switch (currentMatch){
+                            case 0:
+                                parseMatch.put("Team1", firstRoundTeams.get(6).getTeamName());
+                                parseMatch.put("Seed", 11);
+                                parseMatch.put("Team2", firstRoundTeams.get(1).getTeamName());
+                                parseMatch.put("Seed2", 6);
+                                break;
+                            case 1:
+                                parseMatch.put("Team1", firstRoundTeams.get(5).getTeamName());
+                                parseMatch.put("Seed", 10);
+                                parseMatch.put("Team2", firstRoundTeams.get(2).getTeamName());
+                                parseMatch.put("Seed2", 7);
+                                break;
+                            case 2:
+                                parseMatch.put("Team1", firstRoundTeams.get(7).getTeamName());
+                                parseMatch.put("Seed", 12);
+                                parseMatch.put("Team2", firstRoundTeams.get(0).getTeamName());
+                                parseMatch.put("Seed2", 5);
+                                break;
+                            case 3:
+                                parseMatch.put("Team1", firstRoundTeams.get(4).getTeamName());
+                                parseMatch.put("Seed", 9);
+                                parseMatch.put("Team2", firstRoundTeams.get(3).getTeamName());
+                                parseMatch.put("Seed2", 8);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else{
+                        parseMatch.put("Team1", "TBD");
+                        parseMatch.put("Team2", "TBD");
                     }
                     parseMatch.put("RoundNumber", currentRound);
                     parseMatch.put("MatchNumber", actualMatchNum);
@@ -442,7 +480,7 @@ public class ParseOps {
 
     }
 
-    public void savePlayoffMatch(String objectID, int winner, int CD){
+    public void savePlayoffMatch(String objectID, int winner, int CD, int seed1, int seed2){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("PlayoffMatch");
         try {
             ParseObject match = query.get(objectID);
@@ -477,12 +515,31 @@ public class ParseOps {
             if (match.getInt("RoundNumber") == 1){
                 String winnerString = String.format("Team%d", winner);
                 nextMatch.put(teamSpot,match.getString(winnerString));
+                if (winner == 1){
+                    nextMatch.put("Seed2", seed1);
+                }
+                else if (winner == 2){
+                    nextMatch.put("Seed2", seed2);
+                }
+
             }
             else {
                 if (winner == 1) {
                     nextMatch.put(teamSpot, match.getString("Team1"));
+                    if (teamSpot.equals("Team1")){
+                        nextMatch.put("Seed", seed1);
+                    }
+                    else if (teamSpot.equals("Team2")){
+                        nextMatch.put("Seed2", seed1);
+                    }
                 } else if (winner == 2) {
                     nextMatch.put(teamSpot, match.getString("Team2"));
+                    if (teamSpot.equals("Team1")){
+                        nextMatch.put("Seed", seed2);
+                    }
+                    else if (teamSpot.equals("Team2")){
+                        nextMatch.put("Seed2", seed2);
+                    }
                 }
             }
             nextMatch.saveInBackground();

@@ -48,4 +48,22 @@
         android:layout_below="@+id/seekBar"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="team1"
+        android:id="@+id/txtteam1"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/rdo_team1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="team2"
+        android:id="@+id/txtteam2"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/rdo_team2" />
+
 </RelativeLayout>

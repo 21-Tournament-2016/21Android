@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +35,6 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
     private int lastExpandedGroupPosition = -1;
     ExpandableListView listView;
     private static ProgressDialog dialog;
-    private int height;
     private String type;
 
     public ScheduleExpandableListAdapter(Context context, List<Round> listDataHeader, ExpandableListView listView, int currentRound, int height, String type){
@@ -44,7 +43,6 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         this.currentRound = currentRound;
         this.matches = rounds.get(currentRound).getMatches();
         this.listView = listView;
-        this.height = height / (matches.size()+1)+20;
         this.type = type;
     }
 
@@ -61,49 +59,92 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = infalInflater.inflate(R.layout.schedule_header_item, null);
-
-        convertView.setMinimumHeight(height);
+        convertView = infalInflater.inflate(R.layout.schedule_item, null);
 
         Match match = matches.get(groupPosition);
-        TextView vs = (TextView) convertView.findViewById(R.id.lbl_vs);
-        TextView lblTeam1 = (TextView) convertView.findViewById(R.id.lbl_team1);
-        TextView lblTeam2 = (TextView) convertView.findViewById(R.id.lbl_team2);
-        TextView lblTeam1Record = (TextView) convertView.findViewById(R.id.lbl_team1Record);
-        TextView lblTeam2Record = (TextView) convertView.findViewById(R.id.lbl_team2Record);
-        TextView lblwinnerCupDifferential = (TextView) convertView.findViewById(R.id.lbl_winnerCupDifferential);
+        TextView lblTeam1 = (TextView) convertView.findViewById(R.id.currentTeamName);
+        TextView lblTeam2 = (TextView) convertView.findViewById(R.id.currentOpponentName);
+        TextView lblTeam1Record = (TextView) convertView.findViewById(R.id.t1record);
+        TextView lblTeam2Record = (TextView) convertView.findViewById(R.id.t2record);
+        TextView lblwinnerCupDifferential = (TextView) convertView.findViewById(R.id.cupDifferential);
+        TextView divider = (TextView) convertView.findViewById(R.id.dividerLine);
+        ImageView team1Image = (ImageView) convertView.findViewById(R.id.currentTeamLogo);
+        ImageView team2Image = (ImageView) convertView.findViewById(R.id.currentOpponentLogo);
         TextView team1Arrow = (TextView) convertView.findViewById(R.id.lbl_team1Arrow);
         TextView team2Arrow = (TextView) convertView.findViewById(R.id.lbl_team2Arrow);
+        TextView vConnect = (TextView) convertView.findViewById(R.id.playoffConnector);
+        View t1V = (View) convertView.findViewById(R.id.t1Line);
+        View t2V = (View) convertView.findViewById(R.id.t2Line);
+        View connect = (View) convertView.findViewById(R.id.hconnect);
 
-        team1Arrow.setTextColor(Color.YELLOW);
-        team2Arrow.setTextColor(Color.YELLOW);
+        String team1 = match.getTeam1().split("\\s+")[0].toLowerCase();
+        int resID1 = context.getResources().getIdentifier(team1, "drawable", context.getPackageName());
+        String team2 = match.getTeam2().split("\\s+")[0].toLowerCase();
+        int resID2 = context.getResources().getIdentifier(team2, "drawable", context.getPackageName());
 
         lblTeam1.setText(match.getTeam1());
         lblTeam2.setText(match.getTeam2());
-        lblTeam1Record.setText(match.getTeam1Record());
-        lblTeam2Record.setText(match.getTeam2Record());
+
+        if (type.equals("schedule")) {
+            lblTeam1Record.setText(match.getTeam1Record());
+            lblTeam2Record.setText(match.getTeam2Record());
+        }
+        else if (type.equals("playoffs")){
+            if (match.getSeed1() != 0) {
+                lblTeam1Record.setText(Integer.toString(match.getSeed1()));
+            }
+            else{
+                lblTeam1Record.setText("");
+            }
+            if (match.getSeed2() != 0) {
+                lblTeam2Record.setText(Integer.toString(match.getSeed2()));
+            }
+            else {
+                lblTeam2Record.setText("");
+            }
+            int paddingPixel = 65;
+            float density = context.getResources().getDisplayMetrics().density;
+            int paddingDp = (int)(paddingPixel * density);
+            lblTeam1Record.setPadding(0,0,paddingDp,0);
+            lblTeam2Record.setPadding(0,0,paddingDp,0);
+        }
+
+        team1Image.setImageResource(resID1);
+        team2Image.setImageResource(resID2);
 
         if (type.equals("playoffs")){
             lblwinnerCupDifferential.setVisibility(View.INVISIBLE);
+            divider.setVisibility(View.INVISIBLE);
+            vConnect.setVisibility(View.VISIBLE);
+            t1V.setVisibility(View.VISIBLE);
+            t2V.setVisibility(View.VISIBLE);
+            connect.setVisibility(View.VISIBLE);
         }
 
         if (match.getWinner() != 0) {
-            String cups = (match.getCupDifferential() == 1) ? "cup" : "cups";
+            String cups = (match.getCupDifferential() == 1) ? "\ncup" : "\ncups";
             lblwinnerCupDifferential.setText(String.format("%d %s", match.getCupDifferential(), cups));
+            int paddingPixel = 65;
+            float density = context.getResources().getDisplayMetrics().density;
+            int paddingDp = (int)(paddingPixel * density);
+            lblTeam1Record.setPadding(0,0,paddingDp,0);
+            lblTeam2Record.setPadding(0,0,paddingDp,0);
         } else {
-            lblwinnerCupDifferential.setVisibility(View.GONE);
+            lblwinnerCupDifferential.setVisibility(View.INVISIBLE);
+            divider.setVisibility(View.INVISIBLE);
         }
         if (match.getWinner() == 1) {
-            lblTeam2.setTextColor(Color.GRAY);
-            team1Arrow.setVisibility(View.VISIBLE);
+            lblTeam2.setTextColor((Color.parseColor("#B4B4B4")));
+            lblTeam2Record.setTextColor((Color.parseColor("#B4B4B4")));
+            if (type.equals("schedule")) {
+                team1Arrow.setVisibility(View.VISIBLE);
+            }
         } else if (match.getWinner() == 2) {
-            lblTeam1.setTextColor(Color.GRAY);
-            team2Arrow.setVisibility(View.VISIBLE);
-            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            p.addRule(RelativeLayout.BELOW, R.id.lbl_team1);
-            lblTeam1Record.setLayoutParams(p);
+            lblTeam1.setTextColor(Color.parseColor("#B4B4B4"));
+            lblTeam1Record.setTextColor((Color.parseColor("#B4B4B4")));
+            if (type.equals("schedule")) {
+                team2Arrow.setVisibility(View.VISIBLE);
+            }
         }
         return convertView;
     }
@@ -121,12 +162,18 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         final RadioButton team1Button = (RadioButton) convertView.findViewById(R.id.rdo_team1);
         final RadioButton team2Button = (RadioButton) convertView.findViewById(R.id.rdo_team2);
         final TextView cups = (TextView) convertView.findViewById(R.id.lbl_cupDifferential);
+        TextView team1 = (TextView) convertView.findViewById(R.id.txtteam1);
+        TextView team2 = (TextView) convertView.findViewById(R.id.txtteam2);
         SeekBar cupBar = (SeekBar) convertView.findViewById(R.id.seekBar);
         cupBar.setProgress(0);
 
         btnSaveGame.setBackground(new ColorDrawable(Color.RED));
         btnSaveGame.setTextColor(Color.WHITE);
         cups.setTextColor(Color.WHITE);
+        team1.setTextColor(Color.WHITE);
+        team2.setTextColor(Color.WHITE);
+        team1.setText(match.getTeam1());
+        team2.setText(match.getTeam2());
 
         cupBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -156,14 +203,14 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
                         match.setTeam1Record(updateStandingsString(match.getTeam1Record(), true));
                         match.setTeam2Record(updateStandingsString(match.getTeam2Record(), false));
                     }
-                    ((ScheduleActivity) context).saveMatch(match.getObjectID(), 1, Integer.parseInt((String) cups.getText()));
+                    ((ScheduleActivity) context).saveMatch(match.getObjectID(), 1, Integer.parseInt((String) cups.getText()), match.getSeed1(), match.getSeed2());
                 } else if (team2Button.isChecked()) {
                     match.setWinner(2);
                     if (type.equals("schedule")) {
                         match.setTeam2Record(updateStandingsString(match.getTeam2Record(), true));
                         match.setTeam1Record(updateStandingsString(match.getTeam1Record(), false));
                     }
-                    ((ScheduleActivity) context).saveMatch(match.getObjectID(), 2, Integer.parseInt((String) cups.getText()));
+                    ((ScheduleActivity) context).saveMatch(match.getObjectID(), 2, Integer.parseInt((String) cups.getText()), match.getSeed1(), match.getSeed2());
                 } else {
                     Toast.makeText(context, "You must select a match winner", Toast.LENGTH_LONG).show();
                 }

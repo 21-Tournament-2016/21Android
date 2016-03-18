@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/currentTeamLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:paddingTop="5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/currentOpponentLogo"
+        android:layout_below="@+id/currentTeamLogo"
+        android:layout_alignParentStart="true"
+        android:paddingTop="5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/currentTeamName"
+        android:layout_above="@+id/currentOpponentLogo"
+        android:layout_toEndOf="@+id/currentTeamLogo"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/currentOpponentName"
+        android:layout_alignBottom="@+id/currentOpponentLogo"
+        android:layout_toEndOf="@+id/currentOpponentLogo"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="##"
+        android:id="@+id/cupDifferential"
+        android:layout_alignBottom="@+id/currentOpponentName"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:id="@+id/t1Line"
+        android:layout_marginEnd="50dp"
+        android:layout_alignBottom="@+id/currentTeamName"
+        android:visibility="invisible"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:id="@+id/t2Line"
+        android:layout_marginEnd="50dp"
+        android:layout_alignBottom="@+id/currentOpponentName"
+        android:visibility="invisible"/>
+    <View
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:id="@+id/hconnect"
+        android:layout_marginBottom="22dp"
+        android:layout_above="@+id/t2Line"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="2dp"
+        android:layout_height="105dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/dividerLine"
+        android:background="#000000"
+        android:layout_alignBottom="@+id/currentOpponentName"
+        android:layout_toStartOf="@+id/cupDifferential" />
+    <TextView
+        android:layout_width="2dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/playoffConnector"
+        android:background="#000000"
+        android:layout_alignBottom="@+id/currentOpponentName"
+        android:layout_toStartOf="@+id/cupDifferential"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0-0"
+        android:id="@+id/t1record"
+        android:gravity="center"
+        android:paddingEnd="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0-0"
+        android:id="@+id/t2record"
+        android:gravity="center"
+        android:paddingEnd="10dp"
+        android:layout_alignBottom="@+id/cupDifferential"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="◄"
+        android:id="@+id/lbl_team2Arrow"
+        android:gravity="center"
+        android:layout_below="@+id/t1record"
+        android:layout_toStartOf="@+id/dividerLine"
+        android:textColor="#000"
+        android:layout_marginEnd="-2dp"
+        android:visibility="invisible"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="◄"
+        android:id="@+id/lbl_team1Arrow"
+        android:gravity="center"
+        android:layout_above="@+id/t2record"
+        android:layout_toStartOf="@+id/dividerLine"
+        android:textColor="#000"
+        android:layout_marginEnd="-2dp"
+        android:visibility="invisible"/>
+
+
+</RelativeLayout>

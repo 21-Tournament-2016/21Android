@@ -18,6 +18,25 @@ public class Match implements Serializable{
     private String team2Record;
     private int round;
     private int matchNumber;
+    private int seed1;
+
+    public int getSeed2() {
+        return seed2;
+    }
+
+    public void setSeed2(int seed2) {
+        this.seed2 = seed2;
+    }
+
+    public int getSeed1() {
+        return seed1;
+    }
+
+    public void setSeed1(int seed1) {
+        this.seed1 = seed1;
+    }
+
+    private int seed2;
 
     public Match(String objectID, String team1, String team2, String team1ID, String team2ID, int winner, int cupDifferential, String team1Record, String team2Record) {
         this.objectID = objectID;
@@ -31,7 +50,7 @@ public class Match implements Serializable{
         this.team2Record = team2Record;
     }
 
-    public Match (String team1, String team2, int round, int matchNumber, int cupDifferential, int winner, String objectID){
+    public Match (String team1, String team2, int round, int matchNumber, int cupDifferential, int winner, String objectID, int seed1, int seed2){
         this.team1 = team1;
         this.team2 = team2;
         this.round = round;
@@ -39,6 +58,8 @@ public class Match implements Serializable{
         this.cupDifferential = cupDifferential;
         this.winner = winner;
         this.objectID = objectID;
+        this.seed1 = seed1;
+        this.seed2 = seed2;
     }
 
     public Match (String team1, String team2, int round, int matchNumber, int cupDifferential, int winner){
