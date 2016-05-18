@@ -76,6 +76,9 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
         View t1V = (View) convertView.findViewById(R.id.t1Line);
         View t2V = (View) convertView.findViewById(R.id.t2Line);
         View connect = (View) convertView.findViewById(R.id.hconnect);
+        TextView championsText = (TextView) convertView.findViewById(R.id.txt_championTeam);
+        TextView championsLabel = (TextView) convertView.findViewById(R.id.txt_championslbl);
+        ImageView champsImage = (ImageView) convertView.findViewById(R.id.championImage);
 
         String team1 = match.getTeam1().split("\\s+")[0].toLowerCase();
         int resID1 = context.getResources().getIdentifier(team1, "drawable", context.getPackageName());
@@ -119,6 +122,20 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
             t1V.setVisibility(View.VISIBLE);
             t2V.setVisibility(View.VISIBLE);
             connect.setVisibility(View.VISIBLE);
+            if (match.getWinner() == 1 && currentRound == 3){
+                champsImage.setImageResource(resID1);
+                championsText.setText(match.getTeam1());
+                champsImage.setVisibility(View.VISIBLE);
+                championsLabel.setVisibility(View.VISIBLE);
+                championsText.setVisibility(View.VISIBLE);
+            }
+            else if (match.getWinner() == 2  && currentRound == 3){
+                champsImage.setImageResource(resID2);
+                championsText.setText(match.getTeam2());
+                champsImage.setVisibility(View.VISIBLE);
+                championsLabel.setVisibility(View.VISIBLE);
+                championsText.setVisibility(View.VISIBLE);
+            }
         }
 
         if (match.getWinner() != 0) {
@@ -227,13 +244,14 @@ public class ScheduleExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        Match match = matches.get(groupPosition);
-        if (match.getWinner() == 0){
-            return 1;
-        }
-        else{
-            return 0;
-        }
+        return 0;
+//        Match match = matches.get(groupPosition);
+//        if (match.getWinner() == 0){
+//            return 1;
+//        }
+//        else{
+//            return 0;
+//        }
     }
 
     @Override
