@@ -46,11 +46,15 @@ public class ScheduleActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
         rounds = (List<Round>) extras.getSerializable("schedule");
         type = (String) extras.getSerializable("type");
-        if (type.equals("schedule")){
+        if (type.equals("schedule") && currentRound != rounds.get(rounds.size() - 1).getRoundNumber()){
             currentRound = ParseOps.getCurrentScheduleRound() - 1;
         }
-        else if (type.equals("playoffs")){
-            currentRound = ParseOps.getCurrentPlayoffRound() - 1;
+        else{
+            currentRound = 0;
+        }
+
+        if (currentRound <= 0){
+            currentRound = 0;
         }
         getSupportActionBar().setTitle(String.format("Round %d", currentRound + 1));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.RED));

@@ -109,7 +109,8 @@
         android:id="@+id/btn_restartPlayoffs"
         android:layout_above="@+id/btn_schedule"
         android:layout_alignParentStart="true"
-        android:onClick="startPlayoffs"/>
+        android:onClick="startPlayoffs"
+        android:visibility="gone"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -119,6 +120,7 @@
         android:id="@+id/btn_restartSeason"
         android:layout_above="@+id/btn_schedule"
         android:layout_alignParentEnd="true"
-        android:onClick="restart"/>
+        android:onClick="restart"
+        android:visibility="gone"/>
 
 </RelativeLayout>
